@@ -6,11 +6,12 @@ import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class StackTest {
 	@Test
 	void testStack() {
-		Stack cs = new StackImpl();
+		Stack<Character> cs = new StackImpl<Character>();
 
 		// zu Beginn muss der Stack leer sein!
 		assertEquals(0, cs.size());
@@ -27,7 +28,7 @@ public class StackTest {
 
 		// ...und rückwärts!
 		for (int i = a.length-1; i >= 0; i--)
-			assertEquals(a[i], cs.pop());
+			assertEquals((Character) a[i], cs.pop());
 
 		// Jetzt muss er wieder leer sein!
 		assertEquals(0, cs.size());

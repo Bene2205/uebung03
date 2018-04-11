@@ -1,12 +1,13 @@
 package ueb03;
 
+import java.util.Comparator;
 import java.util.NoSuchElementException;
 
-public class SetImpl implements Set {
+public class SetImpl<T> implements Set<T> {
 	class Element {
-		String val;
+		T val;
 		Element left, right;
-		Element(String v, Element l, Element r) {
+		Element(T v, Element l, Element r) {
 			val = v;
 			left = l;
 			right = r;
@@ -23,14 +24,16 @@ public class SetImpl implements Set {
 		}
 	}
 
+
+
 	Element root;
 
 	@Override
-	public boolean add(String s) {
-		return addElement(new Element(s, null, null));
+	public boolean add(T s, Comparator<T> comp) {
+		return addElement(new Element(s, null, null), comp);
 	}
 
-	private boolean addElement(Element e) {
+	private boolean addElement(Element e, Comparator<T> comp) {
 		if (e == null)
 			return false;
 
@@ -41,7 +44,7 @@ public class SetImpl implements Set {
 
 		Element it = root;
 		while (it != null) {
-			int c = e.val.compareTo(it.val);
+			int c = comp.compare(it.val, e.val);
 			if (c == 0)
 				return false;
 			else if (c < 0) {
@@ -63,13 +66,13 @@ public class SetImpl implements Set {
 	}
 
 	@Override
-	public boolean contains(String s) {
+	public boolean contains(T s, Comparator<T> comp) {
 		if (root == null)
 			return false;
 
 		Element it = root;
 		while (it != null) {
-			int c = s.compareTo(it.val);
+			int c = comp.compare(it.val, s);
 			if (c == 0)
 				return true;
 			else if (c < 0) {
@@ -84,23 +87,24 @@ public class SetImpl implements Set {
 	}
 
 	@Override
-	public String remove(String s) {
+	public T remove(T s, Comparator<T> comp) {
 		if (root == null)
 			throw new NoSuchElementException();
 
 		// Spezialfall: Root Element loeschen
 		if (root.val.equals(s))
-			return removeRoot();
+			return removeRoot(comp);
 
 		Element it = root;
 		while (it != null) {
-			if (s.compareTo(it.val) < 0) {
+			int c = comp.compare(s, it.val);
+			if (c < 0) {
 				if (it.left != null && it.left.val.equals(s))
-					return removeElement(it, it.left);
+					return removeElement(it, it.left, comp);
 				it = it.left;
 			} else {
 				if (it.right != null && it.right.val.equals(s))
-					return removeElement(it, it.right);
+					return removeElement(it, it.right, comp);
 				it = it.right;
 			}
 		}
@@ -108,7 +112,7 @@ public class SetImpl implements Set {
 		throw new NoSuchElementException();
 	}
 
-	private String removeRoot() {
+	private T removeRoot(Comparator<T> comp) {
 		assert(root != null);
 
 		Element e = root;
@@ -124,7 +128,7 @@ public class SetImpl implements Set {
 		} else {
 			// eines wird root, anderes einfuegen
 			root = e.left;
-			addElement(e.right);
+			addElement(e.right, comp);
 		}
 
 		// Wert zurueck geben
@@ -136,7 +140,7 @@ public class SetImpl implements Set {
 	 * @param p Elternelement
 	 * @param e zu loeschendes Element
 	 */
-	private String removeElement(Element p, Element e) {
+	private T removeElement(Element p, Element e, Comparator<T> comp) {
 		if (e == p.left) {
 			p.left = null;  // links abgestiegen
 		} else {
@@ -144,8 +148,8 @@ public class SetImpl implements Set {
 		}
 
 		// Kinder einfuegen
-		addElement(e.left);
-		addElement(e.right);
+		addElement(e.left, comp);
+		addElement(e.right, comp);
 
 		return e.val;
 	}

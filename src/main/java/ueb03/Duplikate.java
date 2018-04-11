@@ -1,5 +1,7 @@
 package ueb03;
 
+import java.util.Comparator;
+
 class Duplikate {
 	/**
 	 * Gibt ein Set mit den Wörtern zurück, welche mindestens zwei mal im Text vorkommen.
@@ -16,16 +18,24 @@ class Duplikate {
 		}
 		text = sb.toString();
 
-		Set s1 = new SetImpl();
-		Set s2 = new SetImpl();
+		Comparator<String> c = new Comparator<String>() {
+			@Override
+			public int compare(String o1, String o2) {
+				return o1.compareTo(o2);
+			}
+		};
+
+		Set<String> s1 = new SetImpl<String>();
+		Set<String> s2 = new SetImpl<String>();
+
 
 		for (String w : text.split(" ")) {
 			// kennt das erste Set das Wort bereits, so tritt es zum 2. mal auf!
-			if (s1.contains(w))
-				s2.add(w);
+			if (s1.contains(w, c))
+				s2.add(w,c);
 
 			// jedes Wort in das erste Set einfuegen
-			s1.add(w);
+			s1.add(w,c);
 		}
 
 		return s2;
