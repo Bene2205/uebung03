@@ -10,7 +10,7 @@ class DuplikateTest {
 	void testFindeDuplikate() {
 		String t1 = "In Ulm! und um Ulm! und um Ulm herum!";
 
-		Set s1 = findeDuplikate(t1);
+		Set<String> s1 = findeDuplikate(t1);
 
 		assertEquals(3, s1.size());  // Ulm und um
 		assertTrue(s1.contains("Ulm"));
